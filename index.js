@@ -47,15 +47,7 @@ function startBot(message) {
     child.on("close", (codeExit) => {
         if (codeExit !== 0 && global.countRestart < 5) {
             global.countRestart += 1;
-            logger(`Bot exited with code ${codeExit}. Restarting... (${global.countRestart}/5)`, "[ Restarting ]");
-            startBot();
-        } else {
-            logger(`Bot stopped after ${global.countRestart} restarts.`, "[ Stopped ]");
-        }
-    });
-
-    child.on("error", (error) => {
-        logger(`An error occurred: ${JSON.stringify(error)}`, "[ Error ]");
+            logger(`Bot exited with code ${codeExit}. Restarting... (${global.countRestartRestartierror occurred: ${JSON.stringify(error)}`, "[ Error ]");
     });
 };
 
@@ -65,13 +57,33 @@ function startBot(message) {
 
 axios.get("https://raw.githubusercontent.com/priyanshu192/bot/main/package.json")
     .then((res) => {
-        logger(res.data.name, "[ NAME ]");
-        logger(`Version: ${res.data.version}`, "[ VERSION ]");
-        logger(res.data.description, "[ DESCRIPTION ]");
-    })
-    .catch((err) => {
-        logger(`Failed to fetch update info: ${err.message}`, "[ Update Error ]");
-    });
+    const axios = require('axios');
 
-// Start the bot
-startBot();
+class MyFCA {
+  constructor(authToken) {
+    this.authToken = authToken;
+    this.baseUrl = 'https://graph.facebook.com/v17.0';
+  }
+
+  async sendMessage(threadID, message) {
+    try {
+      const response = await axios.post(
+        `${this.baseUrl}/me/messages`,
+        {
+          recipient: { id: threadID },
+          message: { text: message },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.authToken}`,
+          },
+        }
+      );
+      console.log('Message sent:', response.data);
+    } catch (error) {
+      console.error('Error sending message:', error.response.data);
+    }
+  }
+}
+
+module.exports = MyFCA;
